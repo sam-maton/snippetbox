@@ -1,0 +1,24 @@
+{
+  "name": "snippetbox",
+  "version": "1.0.0",
+  "description": "An application following the \"Let's Go\" publication.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sam-maton/snippetbox.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sam-maton/snippetbox/issues"
+  },
+  "homepage": "https://github.com/sam-maton/snippetbox#readme",
+  "devDependencies": {
+    "prettier": "^3.4.2",
+    "prettier-plugin-go-template": "^0.0.15"
+  }
+}
