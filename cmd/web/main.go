@@ -22,17 +22,9 @@ func main() {
 		})),
 	}
 
-	mux := http.NewServeMux()
-
-	fileServer := http.FileServer(http.Dir("./ui/static"))
-	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
-	mux.HandleFunc("/", app.home)
-	mux.HandleFunc("/snippet/view", app.snippetView)
-	mux.HandleFunc("POST /snippet/create", app.snippetCreate)
-
 	app.logger.Info("starting server on http://localhost" + *addr)
 
-	err := http.ListenAndServe(*addr, mux)
+	err := http.ListenAndServe(*addr, app.routes())
 	app.logger.Error(err.Error())
 	os.Exit(1)
 }
