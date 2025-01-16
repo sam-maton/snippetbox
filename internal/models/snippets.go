@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 )
 
@@ -18,7 +19,20 @@ type SnippetModel struct {
 }
 
 func (m *SnippetModel) Insert(title string, content string, expires int) (int, error) {
-	return 0, nil
+
+	var id int
+	expireDate := time.Now().Add((time.Hour * 24) * time.Duration(expires))
+
+	stmt := `INSERT INTO snippets (title, content, created, expires)
+	VALUES($1, $2, NOW(), $3) RETURNING id`
+
+	err := m.DB.QueryRow(stmt, title, content, expireDate).Scan(&id)
+	if err != nil {
+		fmt.Println(err)
+		return 0, err
+	}
+
+	return id, nil
 }
 
 func (m *SnippetModel) Get(id int) (Snippet, error) {

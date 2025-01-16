@@ -12,8 +12,8 @@ import (
 )
 
 type application struct {
-	logger  *slog.Logger
-	snippet *models.SnippetModel
+	logger   *slog.Logger
+	snippets *models.SnippetModel
 }
 
 func main() {
@@ -36,7 +36,7 @@ func main() {
 
 	app := application{
 		logger: logger,
-		snippet: &models.SnippetModel{
+		snippets: &models.SnippetModel{
 			DB: db,
 		},
 	}
