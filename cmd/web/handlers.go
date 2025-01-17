@@ -51,6 +51,7 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		} else {
 			app.serverError(w, r, err)
 		}
+		return
 	}
 	fmt.Fprintf(w, "%+v", snippet)
 }
