@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"html/template"
 	"net/http"
 	"strconv"
 
@@ -16,25 +15,36 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	files := []string{
-		"./ui/html/base.html",
-		"./ui/html/partials/nav.html",
-		"./ui/html/pages/home.html",
-	}
+	snippets, err := app.snippets.Latest()
 
-	ts, err := template.ParseFiles(files...)
 	if err != nil {
-		app.logger.Error(err.Error(), "method", r.Method, "URI", r.URL.RequestURI())
 		app.serverError(w, r, err)
 		return
 	}
 
-	err = ts.ExecuteTemplate(w, "base", nil)
-	if err != nil {
-		app.logger.Error(err.Error())
-		app.serverError(w, r, err)
-		return
+	for _, snippet := range snippets {
+		fmt.Fprintf(w, "%+v\n", snippet)
 	}
+
+	// files := []string{
+	// 	"./ui/html/base.html",
+	// 	"./ui/html/partials/nav.html",
+	// 	"./ui/html/pages/home.html",
+	// }
+
+	// ts, err := template.ParseFiles(files...)
+	// if err != nil {
+	// 	app.logger.Error(err.Error(), "method", r.Method, "URI", r.URL.RequestURI())
+	// 	app.serverError(w, r, err)
+	// 	return
+	// }
+
+	// err = ts.ExecuteTemplate(w, "base", nil)
+	// if err != nil {
+	// 	app.logger.Error(err.Error())
+	// 	app.serverError(w, r, err)
+	// 	return
+	// }
 }
 
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
