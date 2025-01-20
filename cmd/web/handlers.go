@@ -17,7 +17,6 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	}
 
 	snippets, err := app.snippets.Latest()
-
 	if err != nil {
 		app.serverError(w, r, err)
 		return
@@ -36,7 +35,11 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ts.ExecuteTemplate(w, "base", snippets)
+	data := templateData{
+		Snippets: snippets,
+	}
+
+	err = ts.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		app.logger.Error(err.Error())
 		app.serverError(w, r, err)
