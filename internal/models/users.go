@@ -39,7 +39,7 @@ func (m *UserModel) Insert(name, email, password string) error {
 		var postgresError *pq.Error
 
 		if errors.As(err, &postgresError) {
-			if postgresError.Code.Class() == "23505" && strings.Contains(postgresError.Message, "users_uc_email") {
+			if postgresError.Code == "23505" && strings.Contains(postgresError.Message, "users_uc_email") {
 				return ErrDuplicateEmail
 			}
 		}
