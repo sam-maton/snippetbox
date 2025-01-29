@@ -6,7 +6,7 @@ import (
 	"github.com/sam-maton/snippetbox/internal/models"
 )
 
-var mockSnippet = models.Snippet{
+var MockSnippet = models.Snippet{
 	ID:      1,
 	Title:   "Test snippet 1",
 	Content: "Test snippet content",
@@ -23,12 +23,12 @@ func (m *SnippetModel) Insert(title string, content string, expires int) (int, e
 func (m *SnippetModel) Get(id int) (models.Snippet, error) {
 	switch id {
 	case 1:
-		return mockSnippet, nil
+		return MockSnippet, nil
 	default:
 		return models.Snippet{}, models.ErrNoRecord
 	}
 }
 
 func (m *SnippetModel) Latest() ([]models.Snippet, error) {
-	return []models.Snippet{mockSnippet}, nil
+	return []models.Snippet{MockSnippet}, nil
 }
