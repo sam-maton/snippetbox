@@ -24,12 +24,14 @@ type application struct {
 	templateCache  map[string]*template.Template
 	formDecoder    *form.Decoder
 	sessionManager *scs.SessionManager
+	debugMode      bool
 }
 
 func main() {
 
 	addr := flag.String("addr", ":4000", "HTTP network address")
 	dsn := flag.String("dsn", "postgres://Sam.Maton:@localhost:5432/snippetbox?sslmode=disable", "Postgres connection string")
+	debug := flag.Bool("debug", false, "Sets the app into debug mode")
 	flag.Parse()
 
 	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
@@ -67,6 +69,7 @@ func main() {
 		templateCache:  templateCache,
 		formDecoder:    formDecoder,
 		sessionManager: sessionManager,
+		debugMode:      *debug,
 	}
 
 	tlsConfig := &tls.Config{
