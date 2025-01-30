@@ -222,7 +222,14 @@ func (app *application) userLoginPost(w http.ResponseWriter, r *http.Request) {
 
 	app.sessionManager.Put(r.Context(), "authenticatedUserID", id)
 
-	http.Redirect(w, r, "/snippet/create", http.StatusSeeOther)
+	url := app.sessionManager.PopString(r.Context(), "url")
+
+	if url == "" {
+		http.Redirect(w, r, "/snippet/create", http.StatusSeeOther)
+		return
+	}
+
+	http.Redirect(w, r, url, http.StatusSeeOther)
 }
 
 func (app *application) userLogoutPost(w http.ResponseWriter, r *http.Request) {
