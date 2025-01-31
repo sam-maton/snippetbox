@@ -30,6 +30,13 @@ type userLoginForm struct {
 	validator.Validator `form:"-"`
 }
 
+type userChangePasswordForm struct {
+	CurrentPassword     string `form:"current-password"`
+	NewPassword         string `form:"new-password"`
+	ConfirmPassword     string `form:"confirm-password"`
+	validator.Validator `form:"-"`
+}
+
 func ping(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("OK"))
 }
@@ -261,10 +268,29 @@ func (app *application) userAccountView(w http.ResponseWriter, r *http.Request) 
 
 func (app *application) userPasswordUpdate(w http.ResponseWriter, r *http.Request) {
 	data := app.newTemplateData(r)
+	data.Form = userChangePasswordForm{}
 
 	app.render(w, r, http.StatusOK, "password.html", data)
 }
 
 func (app *application) userPasswordUpdatePost(w http.ResponseWriter, r *http.Request) {
+	var form userChangePasswordForm
 
+	err := app.decodePostForm(r, &form)
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	form.CheckField(validator.MinChars(form.CurrentPassword, 8), "current", "Your current password must be at least 8 characters")
+	form.CheckField(validator.MinChars(form.NewPassword, 8), "new", "Your new password must be at least 8 characters")
+	form.CheckField(validator.MinChars(form.ConfirmPassword, 8), "confirm", "Yor new password must be at least 8 characters")
+	form.CheckField(validator.Same(form.NewPassword, form.ConfirmPassword), "confirm", "The new password confirmation does not match")
+
+	if !form.Valid() {
+		data := app.newTemplateData(r)
+		data.Form = form
+		app.render(w, r, http.StatusUnprocessableEntity, "password.html", data)
+		return
+	}
 }
