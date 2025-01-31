@@ -33,6 +33,8 @@ func (app *application) routes() http.Handler {
 
 	mux.Handle("POST /user/logout", protected.ThenFunc(app.userLogoutPost))
 	mux.Handle("GET /account/view", protected.ThenFunc(app.userAccountView))
+	mux.Handle("GET /account/password/update", protected.ThenFunc(app.userPasswordUpdate))
+	mux.Handle("POST /account/password/update", protected.ThenFunc(app.userPasswordUpdatePost))
 
 	//OTHER ROUTES
 	mux.Handle("GET /about", dynamic.ThenFunc(app.about))

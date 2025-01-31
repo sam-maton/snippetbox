@@ -258,3 +258,13 @@ func (app *application) userAccountView(w http.ResponseWriter, r *http.Request) 
 
 	app.render(w, r, http.StatusOK, "account.html", data)
 }
+
+func (app *application) userPasswordUpdate(w http.ResponseWriter, r *http.Request) {
+	data := app.newTemplateData(r)
+
+	app.render(w, r, http.StatusOK, "password.html", data)
+}
+
+func (app *application) userPasswordUpdatePost(w http.ResponseWriter, r *http.Request) {
+
+}
