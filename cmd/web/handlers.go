@@ -295,7 +295,6 @@ func (app *application) userPasswordUpdatePost(w http.ResponseWriter, r *http.Re
 
 	if err != nil {
 		form.AddFieldError("current", "Your current password is incorrect")
-		form.CheckField(validator.Same(string(user.HashedPassword), form.CurrentPassword), "current", "Your current password is incorrect")
 	}
 	form.CheckField(validator.MinChars(form.NewPassword, 8), "new", "Your new password must be at least 8 characters")
 	form.CheckField(validator.MinChars(form.ConfirmPassword, 8), "confirm", "Yor new password must be at least 8 characters")
