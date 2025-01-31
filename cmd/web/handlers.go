@@ -294,12 +294,13 @@ func (app *application) userPasswordUpdatePost(w http.ResponseWriter, r *http.Re
 	err = bcrypt.CompareHashAndPassword(user.HashedPassword, []byte(form.CurrentPassword))
 
 	if err != nil {
+		form.AddFieldError("current", "Your current password is incorrect")
 		form.CheckField(validator.Same(string(user.HashedPassword), form.CurrentPassword), "current", "Your current password is incorrect")
 	}
 	form.CheckField(validator.MinChars(form.NewPassword, 8), "new", "Your new password must be at least 8 characters")
 	form.CheckField(validator.MinChars(form.ConfirmPassword, 8), "confirm", "Yor new password must be at least 8 characters")
-	form.CheckField(validator.Same(form.NewPassword, form.ConfirmPassword), "confirm", "The new password confirmation does not match")
-	form.CheckField(validator.Different(form.CurrentPassword, form.NewPassword), "new", "The new password cannot match your old password")
+	form.CheckField(form.NewPassword == form.ConfirmPassword, "confirm", "The new password confirmation does not match")
+	form.CheckField(form.CurrentPassword != form.NewPassword, "new", "The new password cannot match your old password")
 
 	if !form.Valid() {
 		data := app.newTemplateData(r)
