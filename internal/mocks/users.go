@@ -47,3 +47,11 @@ func (m *UserModel) Details(id int) (models.User, error) {
 		return models.User{}, nil
 	}
 }
+
+func (m *UserModel) Password(id int) (models.User, error) {
+	return models.User{}, nil
+}
+
+func (m *UserModel) UpdatePassword(id int, password string) error {
+	return nil
+}

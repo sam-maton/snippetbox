@@ -8,6 +8,7 @@ import (
 
 	"github.com/sam-maton/snippetbox/internal/models"
 	"github.com/sam-maton/snippetbox/internal/validator"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type snippetCreateForm struct {
@@ -282,10 +283,23 @@ func (app *application) userPasswordUpdatePost(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	form.CheckField(validator.MinChars(form.CurrentPassword, 8), "current", "Your current password must be at least 8 characters")
+	userID := app.sessionManager.GetInt(r.Context(), "authenticatedUserID")
+
+	user, err := app.users.Password(userID)
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	err = bcrypt.CompareHashAndPassword(user.HashedPassword, []byte(form.CurrentPassword))
+
+	if err != nil {
+		form.CheckField(validator.Same(string(user.HashedPassword), form.CurrentPassword), "current", "Your current password is incorrect")
+	}
 	form.CheckField(validator.MinChars(form.NewPassword, 8), "new", "Your new password must be at least 8 characters")
 	form.CheckField(validator.MinChars(form.ConfirmPassword, 8), "confirm", "Yor new password must be at least 8 characters")
 	form.CheckField(validator.Same(form.NewPassword, form.ConfirmPassword), "confirm", "The new password confirmation does not match")
+	form.CheckField(validator.Different(form.CurrentPassword, form.NewPassword), "new", "The new password cannot match your old password")
 
 	if !form.Valid() {
 		data := app.newTemplateData(r)
@@ -293,4 +307,15 @@ func (app *application) userPasswordUpdatePost(w http.ResponseWriter, r *http.Re
 		app.render(w, r, http.StatusUnprocessableEntity, "password.html", data)
 		return
 	}
+
+	err = app.users.UpdatePassword(userID, form.NewPassword)
+	if err != nil {
+		data := app.newTemplateData(r)
+		app.render(w, r, http.StatusUnprocessableEntity, "password.html", data)
+		return
+	}
+
+	app.sessionManager.Put(r.Context(), "flash", "Password was successfully updated")
+
+	http.Redirect(w, r, "/account/view", http.StatusSeeOther)
 }
